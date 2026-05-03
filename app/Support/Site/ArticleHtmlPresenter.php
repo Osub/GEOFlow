@@ -7,12 +7,12 @@ use App\Support\GeoFlow\ImageUrlNormalizer;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 
 /**
- * 文章正文 Markdown 渲染与摘要生成（对齐旧版前台展示习惯）。
+ * 文章正文 Markdown/HTML 渲染与摘要生成（对齐旧版前台展示习惯）。
  */
 final class ArticleHtmlPresenter
 {
     /**
-     * 将 Markdown 转为 HTML（剥离不安全 HTML 输入）。
+     * 将 Markdown 转为 HTML，并允许白名单内的安全 HTML。
      */
     public static function markdownToHtml(string $markdown): string
     {
@@ -22,11 +22,11 @@ final class ArticleHtmlPresenter
         }
 
         $converter = new GithubFlavoredMarkdownConverter([
-            'html_input' => 'strip',
+            'html_input' => 'allow',
             'allow_unsafe_links' => false,
         ]);
 
-        return self::decorateRenderedHtml($converter->convert($markdown)->getContent());
+        return self::decorateRenderedHtml(HtmlSanitizer::clean($converter->convert($markdown)->getContent()));
     }
 
     /**
@@ -68,6 +68,8 @@ final class ArticleHtmlPresenter
 
     private static function toPlainLine(string $text): string
     {
+        $text = preg_replace('/<(script|style)\b[^>]*>.*?<\/\1>/isu', ' ', $text) ?? $text;
+        $text = html_entity_decode(strip_tags($text), ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $text = preg_replace('/[#*_`>\[\]()]/u', ' ', $text) ?? $text;
         $text = preg_replace('/\s+/u', ' ', $text) ?? $text;
 

@@ -70,9 +70,9 @@
                         <div class="px-6 py-4 border-b border-gray-200">
                             <div class="flex items-center justify-between">
                                 <h3 class="text-lg font-medium text-gray-900">{{ __($i18nRoot.'.section.content_title') }}</h3>
-                                <div class="flex items-center space-x-2">
+                                <div class="flex items-center gap-2">
                                     <span class="text-sm text-gray-500">{{ __($i18nRoot.'.help.markdown_supported') }}</span>
-                                    <button type="button" onclick="togglePreview()" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50">
+                                    <button type="button" id="content-preview-toggle" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50">
                                         <i data-lucide="eye" class="w-4 h-4 mr-1"></i>
                                         <span id="preview-toggle-text">{{ __($i18nRoot.'.button.show_preview') }}</span>
                                     </button>
@@ -80,10 +80,31 @@
                             </div>
                         </div>
                         <div class="px-6 py-4">
+                            <div class="mb-3 flex flex-wrap items-center gap-1 rounded-md border border-gray-200 bg-gray-50 p-2" aria-label="{{ __($i18nRoot.'.toolbar.label') }}">
+                                <button type="button" data-editor-insert="bold" class="editor-tool-button" title="{{ __($i18nRoot.'.toolbar.bold') }}" aria-label="{{ __($i18nRoot.'.toolbar.bold') }}">
+                                    <strong>B</strong>
+                                </button>
+                                <button type="button" data-editor-insert="italic" class="editor-tool-button" title="{{ __($i18nRoot.'.toolbar.italic') }}" aria-label="{{ __($i18nRoot.'.toolbar.italic') }}">
+                                    <em>I</em>
+                                </button>
+                                <button type="button" data-editor-insert="link" class="editor-tool-button" title="{{ __($i18nRoot.'.toolbar.link') }}" aria-label="{{ __($i18nRoot.'.toolbar.link') }}">
+                                    <i data-lucide="link" class="w-4 h-4"></i>
+                                </button>
+                                <button type="button" data-editor-insert="image" class="editor-tool-button" title="{{ __($i18nRoot.'.toolbar.image') }}" aria-label="{{ __($i18nRoot.'.toolbar.image') }}">
+                                    <i data-lucide="image" class="w-4 h-4"></i>
+                                </button>
+                                <button type="button" data-editor-insert="table" class="editor-tool-button" title="{{ __($i18nRoot.'.toolbar.table') }}" aria-label="{{ __($i18nRoot.'.toolbar.table') }}">
+                                    <i data-lucide="table" class="w-4 h-4"></i>
+                                </button>
+                                <button type="button" data-editor-insert="html" class="editor-tool-button" title="{{ __($i18nRoot.'.toolbar.html') }}" aria-label="{{ __($i18nRoot.'.toolbar.html') }}">
+                                    <i data-lucide="code-xml" class="w-4 h-4"></i>
+                                </button>
+                            </div>
                             <textarea id="content-textarea" name="content" required class="block w-full h-96 border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm editor-textarea" placeholder="{{ __($i18nRoot.'.placeholder.content') }}">{{ $formData['content'] }}</textarea>
                             <div id="content-preview-panel" class="hidden" aria-hidden="true">
                                 <div id="content-preview" class="markdown-preview-pane"></div>
                             </div>
+                            <p class="mt-2 text-xs text-gray-500">{{ __($i18nRoot.'.help.html_safety') }}</p>
                         </div>
                     </div>
 
@@ -214,6 +235,24 @@
             font-size: 14px;
             line-height: 1.5;
         }
+        .editor-tool-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.375rem;
+            color: #374151;
+            background: #fff;
+            border: 1px solid #d1d5db;
+            font-size: 0.875rem;
+            line-height: 1;
+        }
+        .editor-tool-button:hover {
+            color: #1d4ed8;
+            border-color: #93c5fd;
+            background: #eff6ff;
+        }
         /* 与输入框 h-96 同高，内容仅在框内滚动，不撑破下方 SEO 区域 */
         .markdown-preview-pane {
             height: 24rem;
@@ -249,6 +288,130 @@
 @push('scripts')
     <script>
         let previewVisible = false;
+        const previewAllowedTags = new Set([
+            'a', 'article', 'b', 'blockquote', 'br', 'code', 'del', 'div', 'em', 'figcaption',
+            'figure', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img', 'ins',
+            'kbd', 'li', 'mark', 'ol', 'p', 'pre', 's', 'samp', 'small', 'span',
+            'section', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'th', 'thead', 'tr',
+            'u', 'ul',
+        ]);
+        const previewRemoveWithContent = new Set([
+            'base', 'button', 'embed', 'form', 'iframe', 'input', 'link', 'math',
+            'meta', 'object', 'option', 'script', 'select', 'style', 'svg',
+            'textarea',
+        ]);
+        const previewGlobalAttributes = new Set(['aria-label', 'title']);
+        const previewTagAttributes = {
+            a: new Set(['href', 'rel', 'target', 'title']),
+            code: new Set(['class']),
+            img: new Set(['alt', 'height', 'src', 'title', 'width']),
+            ol: new Set(['start', 'type']),
+            td: new Set(['colspan', 'rowspan']),
+            th: new Set(['colspan', 'rowspan']),
+        };
+
+        function isSafePreviewUrl(url, image) {
+            const value = String(url || '').trim().replace(/[\u0000-\u0020\u007f]+/g, '');
+            if (!value) {
+                return false;
+            }
+            if (value.startsWith('#') || value.startsWith('/') || value.startsWith('./') || value.startsWith('../')) {
+                return true;
+            }
+            try {
+                const parsed = new URL(value, window.location.origin);
+                const allowed = image ? ['http:', 'https:'] : ['http:', 'https:', 'mailto:', 'tel:'];
+                return allowed.includes(parsed.protocol);
+            } catch (error) {
+                return !/^[a-z][a-z0-9+.-]*:/i.test(value);
+            }
+        }
+
+        function sanitizePreviewAttributes(element, tag) {
+            Array.from(element.attributes).forEach(function (attribute) {
+                const name = attribute.name.toLowerCase();
+                const value = attribute.value.trim();
+                const tagAllowed = previewTagAttributes[tag] || new Set();
+
+                if (name.startsWith('on') || name.includes(':') || (!previewGlobalAttributes.has(name) && !tagAllowed.has(name))) {
+                    element.removeAttribute(attribute.name);
+                    return;
+                }
+
+                if (name === 'href' && !isSafePreviewUrl(value, false)) {
+                    element.removeAttribute(attribute.name);
+                    return;
+                }
+
+                if (name === 'src' && !isSafePreviewUrl(value, true)) {
+                    element.removeAttribute(attribute.name);
+                    return;
+                }
+
+                if (['height', 'width', 'colspan', 'rowspan', 'start'].includes(name) && !/^\d{1,4}$/.test(value)) {
+                    element.removeAttribute(attribute.name);
+                    return;
+                }
+
+                if (name === 'class') {
+                    const classes = value.split(/\s+/).filter(function (className) {
+                        return /^language-[a-z0-9_-]+$/i.test(className);
+                    });
+                    if (tag !== 'code' || classes.length === 0) {
+                        element.removeAttribute(attribute.name);
+                        return;
+                    }
+                    element.setAttribute('class', classes.join(' '));
+                }
+
+                if (name === 'target' && !['_blank', '_self', '_parent', '_top'].includes(value)) {
+                    element.removeAttribute(attribute.name);
+                }
+            });
+
+            if (tag === 'a' && element.getAttribute('target') === '_blank') {
+                element.setAttribute('rel', 'noopener noreferrer');
+            }
+        }
+
+        function unwrapPreviewElement(element) {
+            const parent = element.parentNode;
+            while (element.firstChild) {
+                parent.insertBefore(element.firstChild, element);
+            }
+            parent.removeChild(element);
+        }
+
+        function sanitizePreviewTree(parent) {
+            Array.from(parent.children).forEach(function (element) {
+                const tag = element.tagName.toLowerCase();
+                if (previewRemoveWithContent.has(tag)) {
+                    element.remove();
+                    return;
+                }
+                if (!previewAllowedTags.has(tag)) {
+                    sanitizePreviewTree(element);
+                    unwrapPreviewElement(element);
+                    return;
+                }
+                sanitizePreviewAttributes(element, tag);
+                sanitizePreviewTree(element);
+                if (tag === 'img' && !element.hasAttribute('src')) {
+                    element.remove();
+                }
+            });
+        }
+
+        function sanitizePreviewHtml(html) {
+            const parser = new DOMParser();
+            const document = parser.parseFromString('<div>' + html + '</div>', 'text/html');
+            const root = document.body.firstElementChild;
+            if (!root) {
+                return '';
+            }
+            sanitizePreviewTree(root);
+            return root.innerHTML;
+        }
 
         function renderPreview() {
             const source = document.getElementById('content-textarea');
@@ -256,7 +419,37 @@
             if (!source || !target || typeof marked === 'undefined') {
                 return;
             }
-            target.innerHTML = marked.parse(source.value || '');
+            target.innerHTML = sanitizePreviewHtml(marked.parse(source.value || ''));
+        }
+
+        function insertEditorSnippet(kind) {
+            const textarea = document.getElementById('content-textarea');
+            if (!textarea) {
+                return;
+            }
+
+            const start = textarea.selectionStart || 0;
+            const end = textarea.selectionEnd || 0;
+            const selected = textarea.value.slice(start, end);
+            const snippets = {
+                bold: ['**' + (selected || 'Bold text') + '**', selected ? start + 2 : start + 2, selected ? end + 2 : start + 11],
+                italic: ['*' + (selected || 'Italic text') + '*', selected ? start + 1 : start + 1, selected ? end + 1 : start + 12],
+                link: ['[' + (selected || 'Link text') + '](https://example.com)', selected ? start + 1 : start + 1, selected ? end + 1 : start + 10],
+                image: ['![' + (selected || 'Image alt') + '](https://example.com/image.jpg)', selected ? start + 2 : start + 2, selected ? end + 2 : start + 11],
+                table: ["\n| Column | Value |\n| --- | --- |\n| Item | Detail |\n", start + 3, start + 9],
+                html: ['\n<section>\n  <h2>' + (selected || 'Section heading') + '</h2>\n  <p>Paragraph text</p>\n</section>\n', selected ? start + 17 : start + 17, selected ? start + 17 + selected.length : start + 32],
+            };
+            const snippet = snippets[kind];
+            if (!snippet) {
+                return;
+            }
+
+            textarea.value = textarea.value.slice(0, start) + snippet[0] + textarea.value.slice(end);
+            textarea.focus();
+            textarea.setSelectionRange(snippet[1], snippet[2]);
+            if (previewVisible) {
+                renderPreview();
+            }
         }
 
         function togglePreview() {
@@ -282,5 +475,12 @@
                 toggleText.textContent = @json(__($i18nRoot.'.button.show_preview'));
             }
         }
+
+        document.getElementById('content-preview-toggle')?.addEventListener('click', togglePreview);
+        document.querySelectorAll('[data-editor-insert]').forEach(function (button) {
+            button.addEventListener('click', function () {
+                insertEditorSnippet(button.dataset.editorInsert || '');
+            });
+        });
     </script>
 @endpush

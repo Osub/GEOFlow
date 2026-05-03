@@ -39,6 +39,33 @@ MD);
         $this->assertStringContainsString('type="checkbox"', $html);
     }
 
+    public function test_article_markdown_allows_safe_html_and_strips_unsafe_html(): void
+    {
+        $html = ArticleHtmlPresenter::markdownToHtml(<<<'MD'
+<section onclick="alert(1)">
+  <h2>HTML 小节</h2>
+  <p><strong>保留加粗</strong><a href="javascript:alert(1)" target="_blank">危险链接</a></p>
+  <a href="https://example.com" target="_blank">安全链接</a>
+  <img src="uploads/images/2026/04/demo.png" onerror="alert(1)" alt="Demo">
+  <script>alert(1)</script>
+</section>
+MD);
+
+        $this->assertStringContainsString('<section>', $html);
+        $this->assertStringContainsString('<h2>HTML 小节</h2>', $html);
+        $this->assertStringContainsString('<strong>保留加粗</strong>', $html);
+        $this->assertStringContainsString('href="https://example.com"', $html);
+        $this->assertStringContainsString('target="_blank"', $html);
+        $this->assertStringContainsString('rel="noopener noreferrer"', $html);
+        $this->assertStringContainsString('>安全链接</a>', $html);
+        $this->assertStringContainsString('src="/storage/uploads/images/2026/04/demo.png"', $html);
+        $this->assertStringNotContainsString('onclick', $html);
+        $this->assertStringNotContainsString('onerror', $html);
+        $this->assertStringNotContainsString('javascript:', $html);
+        $this->assertStringNotContainsString('<script', $html);
+        $this->assertStringNotContainsString('alert(1)', $html);
+    }
+
     public function test_published_article_page_outputs_normalized_image_url(): void
     {
         $category = Category::query()->create([
