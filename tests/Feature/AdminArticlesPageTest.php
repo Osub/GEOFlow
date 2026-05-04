@@ -137,6 +137,45 @@ class AdminArticlesPageTest extends TestCase
             ->assertSee(__('admin.articles.badge.featured'));
     }
 
+    public function test_article_batch_review_routes_are_relative_when_proxy_scheme_is_wrong(): void
+    {
+        $admin = Admin::query()->create([
+            'username' => 'articles_relative_routes_admin',
+            'password' => 'secret-123',
+            'email' => 'articles-relative-routes@example.com',
+            'display_name' => 'Articles Routes Admin',
+            'role' => 'admin',
+            'status' => 'active',
+        ]);
+        $category = Category::query()->create([
+            'name' => '科技资讯',
+            'slug' => 'tech-relative-routes',
+        ]);
+        $author = Author::query()->create([
+            'name' => 'GEOFlow',
+        ]);
+        Article::query()->create([
+            'title' => '审核相对路径测试文章',
+            'slug' => 'admin-review-relative-url',
+            'excerpt' => '摘要',
+            'content' => '正文',
+            'category_id' => $category->id,
+            'author_id' => $author->id,
+            'status' => 'draft',
+            'review_status' => 'pending',
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->withServerVariables([
+                'HTTP_HOST' => 'geo.gpt88.cc:443',
+                'HTTPS' => 'off',
+            ])
+            ->get(route('admin.articles.index', [], false))
+            ->assertOk()
+            ->assertSee('"batch_update_review":"\/geo_admin\/articles\/batch\/update-review"', false)
+            ->assertDontSee('http://geo.gpt88.cc:443/geo_admin/articles/batch/update-review', false);
+    }
+
     public function test_admin_brand_stays_geoflow_when_public_site_name_changes(): void
     {
         $admin = Admin::query()->create([
