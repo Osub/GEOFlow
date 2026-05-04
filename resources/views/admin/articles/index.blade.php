@@ -535,19 +535,34 @@
                 return '';
             }
 
-            if (action.startsWith('/') && !action.startsWith('//')) {
-                return action;
-            }
-
             try {
-                const actionUrl = new URL(action, window.location.origin);
+                const currentUrl = new URL(window.location.href);
+                const actionUrl = new URL(action, currentUrl);
                 if (actionUrl.protocol !== 'http:' && actionUrl.protocol !== 'https:') {
                     return '';
                 }
 
+                if (actionUrl.protocol === 'http:' && (actionUrl.port === '443' || currentUrl.port === '443')) {
+                    actionUrl.protocol = 'https:';
+                    actionUrl.port = '';
+                }
+
+                if (currentUrl.protocol === 'https:' && actionUrl.protocol === 'http:') {
+                    actionUrl.protocol = currentUrl.protocol;
+                    actionUrl.host = currentUrl.host;
+                }
+
+                if (actionUrl.origin === currentUrl.origin) {
+                    return actionUrl.pathname + actionUrl.search + actionUrl.hash;
+                }
+
+                if (actionUrl.protocol === 'https:' && actionUrl.hostname === currentUrl.hostname) {
+                    return actionUrl.toString();
+                }
+
                 return actionUrl.pathname + actionUrl.search + actionUrl.hash;
             } catch (error) {
-                return action;
+                return action.startsWith('/') && !action.startsWith('//') ? action : '';
             }
         }
 

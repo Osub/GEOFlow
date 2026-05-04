@@ -7,6 +7,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@isset($pageTitle){{ $pageTitle }} — @endisset{{ $adminBrandName }}</title>
+    <script>
+        (() => {
+            if (window.location.protocol === 'http:' && window.location.port === '443') {
+                window.location.replace(`https://${window.location.hostname}${window.location.pathname}${window.location.search}${window.location.hash}`);
+            }
+        })();
+    </script>
     <script src="{{ asset('js/tailwindcss.play-cdn.js') }}"></script>
     <script src="{{ asset('js/lucide.min.js') }}"></script>
     @stack('styles')
