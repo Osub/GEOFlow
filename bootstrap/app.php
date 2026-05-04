@@ -15,6 +15,7 @@ use App\Http\Middleware\EnsureApiScope;
 use App\Http\Middleware\EnsureSuperAdmin;
 use App\Http\Middleware\LogAdminActivity;
 use App\Http\Middleware\SiteWebLocale;
+use App\Http\Middleware\TrustProxies;
 use App\Support\ApiResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
@@ -34,6 +35,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->append(TrustProxies::class);
+
         $middleware->alias([
             // 生成/透传 X-Request-Id，并写入响应头
             'api.request_id' => AssignApiRequestId::class,
