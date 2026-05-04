@@ -14,6 +14,7 @@ use App\Http\Middleware\AuthenticateApiToken;
 use App\Http\Middleware\EnsureApiScope;
 use App\Http\Middleware\EnsureSuperAdmin;
 use App\Http\Middleware\LogAdminActivity;
+use App\Http\Middleware\NormalizeProxyHttps;
 use App\Http\Middleware\SiteWebLocale;
 use App\Http\Middleware\TrustProxies;
 use App\Support\ApiResponse;
@@ -36,6 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(TrustProxies::class);
+        $middleware->append(NormalizeProxyHttps::class);
 
         $middleware->alias([
             // 生成/透传 X-Request-Id，并写入响应头

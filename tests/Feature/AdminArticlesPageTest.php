@@ -183,6 +183,52 @@ class AdminArticlesPageTest extends TestCase
             ->assertDontSee('http://geo.gpt88.cc:443/geo_admin/articles/batch/update-review', false);
     }
 
+    public function test_batch_review_redirects_back_to_https_without_default_port(): void
+    {
+        config(['trustedproxy.proxies' => '*']);
+
+        $admin = Admin::query()->create([
+            'username' => 'articles_review_redirect_admin',
+            'password' => 'secret-123',
+            'email' => 'articles-review-redirect@example.com',
+            'display_name' => 'Articles Review Redirect Admin',
+            'role' => 'admin',
+            'status' => 'active',
+        ]);
+        $category = Category::query()->create([
+            'name' => '审核跳转分类',
+            'slug' => 'review-redirect-category',
+        ]);
+        $author = Author::query()->create([
+            'name' => 'GEOFlow',
+        ]);
+        $article = Article::query()->create([
+            'title' => '审核跳转测试文章',
+            'slug' => 'admin-review-redirect-url',
+            'excerpt' => '摘要',
+            'content' => '正文',
+            'category_id' => $category->id,
+            'author_id' => $author->id,
+            'status' => 'draft',
+            'review_status' => 'pending',
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->withHeaders([
+                'referer' => 'http://geo.gpt88.cc:443/geo_admin/articles?review_status=pending',
+            ])
+            ->withServerVariables([
+                'HTTP_HOST' => 'geo.gpt88.cc:443',
+                'HTTP_X_FORWARDED_PROTO' => 'https',
+                'HTTP_X_FORWARDED_PORT' => '443',
+            ])
+            ->post('/geo_admin/articles/batch/update-review', [
+                'article_ids' => [(int) $article->id],
+                'review_status' => 'approved',
+            ])
+            ->assertRedirect('https://geo.gpt88.cc/geo_admin/articles?review_status=pending');
+    }
+
     public function test_admin_brand_stays_geoflow_when_public_site_name_changes(): void
     {
         $admin = Admin::query()->create([
