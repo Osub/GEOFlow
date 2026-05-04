@@ -173,6 +173,9 @@ class AdminArticlesPageTest extends TestCase
             ->get(route('admin.articles.index', [], false))
             ->assertOk()
             ->assertSee('"batch_update_review":"\/geo_admin\/articles\/batch\/update-review"', false)
+            ->assertSee('return actionUrl.pathname + actionUrl.search + actionUrl.hash;', false)
+            ->assertSee("batchForm.setAttribute('action', targetAction);", false)
+            ->assertDontSee('resolvedUrl.toString()', false)
             ->assertDontSee('http://geo.gpt88.cc:443/geo_admin/articles/batch/update-review', false);
     }
 

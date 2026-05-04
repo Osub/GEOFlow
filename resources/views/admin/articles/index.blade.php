@@ -530,18 +530,24 @@
         const ARTICLE_BATCH_ROUTES = @json($articleBatchRoutes);
 
         function normalizeActionUrl(targetAction) {
-            if (typeof targetAction !== 'string' || targetAction.trim() === '') {
+            const action = typeof targetAction === 'string' ? targetAction.trim() : '';
+            if (action === '') {
                 return '';
             }
 
+            if (action.startsWith('/') && !action.startsWith('//')) {
+                return action;
+            }
+
             try {
-                const currentUrl = new URL(window.location.href);
-                const resolvedUrl = new URL(targetAction, currentUrl.origin);
-                resolvedUrl.protocol = currentUrl.protocol;
-                resolvedUrl.host = currentUrl.host;
-                return resolvedUrl.toString();
+                const actionUrl = new URL(action, window.location.origin);
+                if (actionUrl.protocol !== 'http:' && actionUrl.protocol !== 'https:') {
+                    return '';
+                }
+
+                return actionUrl.pathname + actionUrl.search + actionUrl.hash;
             } catch (error) {
-                return targetAction;
+                return action;
             }
         }
 
@@ -551,7 +557,7 @@
             }
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = normalizeActionUrl(EMPTY_TRASH_URL);
+            form.setAttribute('action', normalizeActionUrl(EMPTY_TRASH_URL));
             form.style.display = 'none';
             form.innerHTML = `<input type="hidden" name="_token" value="{{ csrf_token() }}">`;
             document.body.appendChild(form);
@@ -566,7 +572,7 @@
 
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = targetAction;
+            form.setAttribute('action', targetAction);
             form.style.display = 'none';
             form.innerHTML = `
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -649,7 +655,7 @@
                         alert(ARTICLES_I18N.selectAction);
                         return;
                     }
-                    batchForm.action = targetAction;
+                    batchForm.setAttribute('action', targetAction);
 
                     if (IS_TRASH_VIEW) {
                         if (action === 'batch_restore' && !confirm(TRASH_I18N.confirmBatchRestore.replace('__COUNT__', String(selected.length)))) {
