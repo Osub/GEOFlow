@@ -529,13 +529,29 @@
 
         const ARTICLE_BATCH_ROUTES = @json($articleBatchRoutes);
 
+        function normalizeActionUrl(targetAction) {
+            if (typeof targetAction !== 'string' || targetAction.trim() === '') {
+                return '';
+            }
+
+            try {
+                const currentUrl = new URL(window.location.href);
+                const resolvedUrl = new URL(targetAction, currentUrl.origin);
+                resolvedUrl.protocol = currentUrl.protocol;
+                resolvedUrl.host = currentUrl.host;
+                return resolvedUrl.toString();
+            } catch (error) {
+                return targetAction;
+            }
+        }
+
         function submitEmptyTrash() {
             if (!confirm(TRASH_I18N.confirmEmpty)) {
                 return;
             }
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = EMPTY_TRASH_URL;
+            form.action = normalizeActionUrl(EMPTY_TRASH_URL);
             form.style.display = 'none';
             form.innerHTML = `<input type="hidden" name="_token" value="{{ csrf_token() }}">`;
             document.body.appendChild(form);
@@ -543,7 +559,7 @@
         }
 
         function submitAction(action, articleId, extra = {}) {
-            const targetAction = ARTICLE_BATCH_ROUTES[action] ?? '';
+            const targetAction = normalizeActionUrl(ARTICLE_BATCH_ROUTES[action] ?? '');
             if (targetAction === '') {
                 return;
             }
@@ -627,7 +643,7 @@
                         return;
                     }
 
-                    const targetAction = ARTICLE_BATCH_ROUTES[action] ?? '';
+                    const targetAction = normalizeActionUrl(ARTICLE_BATCH_ROUTES[action] ?? '');
                     if (targetAction === '') {
                         event.preventDefault();
                         alert(ARTICLES_I18N.selectAction);
