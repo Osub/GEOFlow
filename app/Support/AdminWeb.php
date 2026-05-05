@@ -23,7 +23,7 @@ final class AdminWeb
 
     public static function siteName(): string
     {
-        return 'GEOFlow';
+        return 'GPT88 GEO';
     }
 
     public static function basePath(): string

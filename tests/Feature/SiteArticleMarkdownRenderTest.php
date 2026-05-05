@@ -152,7 +152,7 @@ MD);
     {
         SiteSetting::query()->updateOrCreate(
             ['setting_key' => 'site_name'],
-            ['setting_value' => 'GEOFlow Demo']
+            ['setting_value' => 'GPT88 GEO Demo']
         );
         SiteSetting::query()->updateOrCreate(
             ['setting_key' => 'site_description'],
@@ -176,8 +176,8 @@ MD);
             ->assertSee('data-home-poster-carousel', false)
             ->assertSee('https://example.com/banner-one.jpg', false)
             ->assertSee('Banner One')
-            ->assertSee('GEOFlow Feed')
-            ->assertSee('GEOFlow Demo')
+            ->assertSee('GPT88 GEO Demo Feed')
+            ->assertSee('GPT88 GEO Demo')
             ->assertSee('Demo homepage description');
     }
 }

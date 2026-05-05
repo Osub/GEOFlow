@@ -1,5 +1,7 @@
 <?php
 
+$brand = \App\Support\AdminWeb::siteName();
+
 return [
     'nav' => [
         'dashboard' => 'Dashboard',
@@ -29,13 +31,13 @@ return [
             'title' => 'Notifications',
             'badge_new' => 'Update',
             'update_available' => 'New version v:version available',
-            'update_desc' => 'A newer GEOFlow release is available on GitHub. Review the changelog and back up your database and uploads before upgrading.',
-            'up_to_date' => 'GEOFlow is up to date',
+            'update_desc' => 'A newer '.$brand.' release is available on GitHub. Review the changelog and back up your database and uploads before upgrading.',
+            'up_to_date' => $brand.' is up to date',
             'no_update_desc' => 'No newer GitHub version was detected.',
             'disabled' => 'Update checks are disabled',
             'disabled_desc' => 'GitHub version checks are disabled. Enable GEOFLOW_UPDATE_CHECK_ENABLED if you want reminders.',
             'unavailable' => 'Update status unavailable',
-            'unavailable_desc' => 'GitHub release metadata could not be loaded. GEOFlow will keep trying with the daily cache policy.',
+            'unavailable_desc' => 'GitHub release metadata could not be loaded. '.$brand.' will keep trying with the daily cache policy.',
             'current_version' => 'Current version: v:version',
             'latest_version' => 'Latest version: v:version',
             'daily_check' => 'GitHub is checked at most once per day.',
@@ -124,7 +126,7 @@ return [
         'not_found_desc' => 'The content you requested does not exist, was removed, or the link is no longer valid.',
     ],
     'footer' => [
-        'copyright' => '© 2026 GEOFlow',
+        'copyright' => '© 2026 '.$brand,
         'version' => 'Version :version',
         'author' => 'Author: Yao Jingang',
         'author_x_profile' => 'Author X Profile',
@@ -748,7 +750,7 @@ return [
             'images' => 'Images',
             'authors' => 'Authors',
             'task_title' => 'Create Task',
-            'task_desc' => 'Choose title libraries, materials, and models, set generation limits and publishing frequency, then let GEOFlow generate and publish content.',
+            'task_desc' => 'Choose title libraries, materials, and models, set generation limits and publishing frequency, then let '.$brand.' generate and publish content.',
             'task_button' => 'Create Task',
         ],
     ],
@@ -1643,7 +1645,7 @@ return [
             'save_failed' => 'Failed to save ad slots',
             'saved' => 'Article detail page ads updated successfully',
         ],
-        'system_name' => 'GEOFlow',
+        'system_name' => $brand,
     ],
     'task_create' => [
         'page_title' => 'Create Task',

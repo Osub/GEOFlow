@@ -1,5 +1,7 @@
 <?php
 
+$brand = \App\Support\AdminWeb::siteName();
+
 $base = require __DIR__.'/../en/admin.php';
 
 return array_replace_recursive($base, [
@@ -31,13 +33,13 @@ return array_replace_recursive($base, [
             'title' => 'Notificações',
             'badge_new' => 'Atualização',
             'update_available' => 'Nova versão v:version disponível',
-            'update_desc' => 'Uma nova versão do GEOFlow está disponível no GitHub. Revise o changelog e faça backup do banco e uploads antes de atualizar.',
-            'up_to_date' => 'GEOFlow está atualizado',
+            'update_desc' => 'Uma nova versão do '.$brand.' está disponível no GitHub. Revise o changelog e faça backup do banco e uploads antes de atualizar.',
+            'up_to_date' => $brand.' está atualizado',
             'no_update_desc' => 'Nenhuma versão mais nova do GitHub foi detectada.',
             'disabled' => 'Verificações de atualização desativadas',
             'disabled_desc' => 'Verificações de versão do GitHub estão desativadas. Ative GEOFLOW_UPDATE_CHECK_ENABLED se quiser lembretes.',
             'unavailable' => 'Status de atualização indisponível',
-            'unavailable_desc' => 'Metadados de release do GitHub não puderam ser carregados. GEOFlow continuará tentando com a política de cache diário.',
+            'unavailable_desc' => 'Metadados de release do GitHub não puderam ser carregados. '.$brand.' continuará tentando com a política de cache diário.',
             'current_version' => 'Versão atual: v:version',
             'latest_version' => 'Última versão: v:version',
             'daily_check' => 'GitHub é verificado no máximo uma vez por dia.',
@@ -126,7 +128,7 @@ return array_replace_recursive($base, [
         'not_found_desc' => 'O conteúdo solicitado não existe, foi removido ou o link não é mais válido.',
     ],
     'footer' => [
-        'copyright' => '© 2026 GEOFlow',
+        'copyright' => '© 2026 '.$brand,
         'version' => 'Versão :version',
         'author' => 'Autor: Yao Jingang',
         'author_x_profile' => 'Perfil X do Autor',
@@ -216,7 +218,7 @@ return array_replace_recursive($base, [
             'images' => 'Imagens',
             'authors' => 'Autores',
             'task_title' => 'Criar Tarefa',
-            'task_desc' => 'Escolha bibliotecas de títulos, materiais e modelos, defina limites de geração e frequência de publicação, então deixe o GEOFlow gerar e publicar conteúdo.',
+            'task_desc' => 'Escolha bibliotecas de títulos, materiais e modelos, defina limites de geração e frequência de publicação, então deixe o '.$brand.' gerar e publicar conteúdo.',
             'task_button' => 'Criar Tarefa',
         ],
     ],

@@ -7,6 +7,7 @@ use App\Models\Article;
 use App\Models\Author;
 use App\Models\Category;
 use App\Models\SiteSetting;
+use App\Support\AdminWeb;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -229,7 +230,7 @@ class AdminArticlesPageTest extends TestCase
             ->assertRedirect('https://geo.gpt88.cc/geo_admin/articles?review_status=pending');
     }
 
-    public function test_admin_brand_stays_geoflow_when_public_site_name_changes(): void
+    public function test_admin_brand_stays_fixed_when_public_site_name_changes(): void
     {
         $admin = Admin::query()->create([
             'username' => 'admin_brand_admin',
@@ -248,7 +249,7 @@ class AdminArticlesPageTest extends TestCase
         $this->actingAs($admin, 'admin')
             ->get(route('admin.dashboard'))
             ->assertOk()
-            ->assertSee('GEOFlow')
+            ->assertSee(AdminWeb::siteName())
             ->assertDontSee('Public Frontend Name');
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+$brand = \App\Support\AdminWeb::siteName();
+
 return [
     'nav' => [
         'dashboard' => '首页',
@@ -29,7 +31,7 @@ return [
             'title' => '通知消息',
             'badge_new' => '有更新',
             'update_available' => '发现新版本 v:version',
-            'update_desc' => 'GitHub 上已经有新的 GEOFlow 版本。建议先查看更新日志，备份数据库与上传文件后再升级。',
+            'update_desc' => 'GitHub 上已经有新的 '.$brand.' 版本。建议先查看更新日志，备份数据库与上传文件后再升级。',
             'up_to_date' => '当前已是最新版本',
             'no_update_desc' => '未检测到比当前版本更新的 GitHub 版本。',
             'disabled' => '更新检查已关闭',
@@ -124,7 +126,7 @@ return [
         'not_found_desc' => '你访问的内容不存在、已被删除，或链接已经失效。',
     ],
     'footer' => [
-        'copyright' => '© 2026 GEOFlow',
+        'copyright' => '© 2026 '.$brand,
         'version' => '版本 :version',
         'author' => '作者：姚金刚',
         'author_x_profile' => '作者X主页',
@@ -735,7 +737,7 @@ return [
         'peak_stat' => '峰值: :count 篇',
         'quick_start' => [
             'eyebrow' => '快速开始',
-            'title' => '只需三步，启动 GEOFlow 自动内容生产',
+            'title' => '只需三步，启动 '.$brand.' 自动内容生产',
             'subtitle' => '先接入可用模型，再准备知识、标题、关键词和图片素材，最后创建任务，即可自动生成草稿并按发布节奏上线。',
             'api_title' => '配置 API',
             'api_desc' => '添加至少一个可用的聊天模型；如果需要知识库 RAG 召回，再配置一个 embedding 模型。',
@@ -1643,7 +1645,7 @@ return [
             'save_failed' => '广告位保存失败',
             'saved' => '文章详情页广告位已更新',
         ],
-        'system_name' => 'GEOFlow',
+        'system_name' => $brand,
     ],
     'task_create' => [
         'page_title' => '创建任务',
