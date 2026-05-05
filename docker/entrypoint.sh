@@ -3,6 +3,26 @@ set -eu
 
 cd /var/www/html
 
+prepare_writable_dirs() {
+  mkdir -p \
+    bootstrap/cache \
+    storage/app/public \
+    storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs
+
+  chmod -R ug+rwx \
+    bootstrap/cache \
+    storage
+
+  if [ "$(id -u)" = "0" ]; then
+    chown -R www-data:www-data \
+      bootstrap/cache \
+      storage
+  fi
+}
+
 if [ ! -f .env ] && [ -f .env.example ]; then
   cp .env.example .env
 fi
@@ -12,6 +32,8 @@ fi
 if [ -z "${APP_KEY:-}" ] || ! printf '%s' "${APP_KEY:-}" | grep -q '^base64:'; then
   unset APP_KEY
 fi
+
+prepare_writable_dirs
 
 COMPOSER_NEED_POST_INSTALL=false
 COMPOSER_ON_START="${COMPOSER_ON_START:-true}"
@@ -51,8 +73,6 @@ fi
 if [ "${COMPOSER_NEED_POST_INSTALL}" = "true" ]; then
   composer dump-autoload --optimize --no-interaction
 fi
-
-mkdir -p storage/app/public storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs
 if [ ! -e public/storage ]; then
   php artisan storage:link --force --no-interaction
 fi

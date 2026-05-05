@@ -3,6 +3,26 @@ set -eu
 
 cd /var/www/html
 
+prepare_writable_dirs() {
+  mkdir -p \
+    bootstrap/cache \
+    storage/app/public \
+    storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs
+
+  chmod -R ug+rwx \
+    bootstrap/cache \
+    storage
+
+  if [ "$(id -u)" = "0" ]; then
+    chown -R www-data:www-data \
+      bootstrap/cache \
+      storage
+  fi
+}
+
 if [ ! -f .env ]; then
   echo "[entrypoint-prod] error: .env is required inside the container"
   exit 1
@@ -14,19 +34,13 @@ if [ -z "${APP_KEY:-}" ] || ! printf '%s' "${APP_KEY:-}" | grep -q '^base64:'; t
   unset APP_KEY
 fi
 
+prepare_writable_dirs
+
 # .env.prod 为可写挂载时，无密钥则自动生成（宿主机可无 PHP）。
 if ! grep -q '^APP_KEY=base64:' .env 2>/dev/null; then
   echo "[entrypoint-prod] php artisan key:generate --force"
   php artisan key:generate --force --no-interaction
 fi
-
-mkdir -p \
-  bootstrap/cache \
-  storage/app/public \
-  storage/framework/cache/data \
-  storage/framework/sessions \
-  storage/framework/views \
-  storage/logs
 
 if [ ! -e public/storage ]; then
   php artisan storage:link --force --no-interaction
