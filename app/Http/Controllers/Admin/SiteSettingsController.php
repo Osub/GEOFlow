@@ -183,10 +183,12 @@ class SiteSettingsController extends Controller
             $copy = trim((string) ($postedAd['copy'] ?? ''));
             $buttonText = trim((string) ($postedAd['button_text'] ?? ''));
             $buttonUrl = $this->normalizeCtaTargetUrl((string) ($postedAd['button_url'] ?? ''));
+            $qrCodeUrl = $this->normalizePublicImageUrl((string) ($postedAd['qr_code_url'] ?? ''));
+            $qrCodeLabel = trim((string) ($postedAd['qr_code_label'] ?? ''));
             $enabled = ! empty($postedAd['enabled']);
             $id = trim((string) ($postedAd['id'] ?? ''));
 
-            if ($name === '' && $badge === '' && $title === '' && $copy === '' && $buttonText === '' && $buttonUrl === '') {
+            if ($name === '' && $badge === '' && $title === '' && $copy === '' && $buttonText === '' && $buttonUrl === '' && $qrCodeUrl === '' && $qrCodeLabel === '') {
                 continue;
             }
 
@@ -202,6 +204,8 @@ class SiteSettingsController extends Controller
                 'copy' => $copy,
                 'button_text' => $buttonText,
                 'button_url' => $buttonUrl,
+                'qr_code_url' => $qrCodeUrl,
+                'qr_code_label' => $qrCodeLabel,
                 'enabled' => $enabled,
             ];
         }
@@ -366,6 +370,8 @@ class SiteSettingsController extends Controller
      *   copy:string,
      *   button_text:string,
      *   button_url:string,
+     *   qr_code_url:string,
+     *   qr_code_label:string,
      *   enabled:bool
      * }>
      */
@@ -390,6 +396,8 @@ class SiteSettingsController extends Controller
                 'copy' => trim((string) ($item['copy'] ?? '')),
                 'button_text' => trim((string) ($item['button_text'] ?? '')),
                 'button_url' => trim((string) ($item['button_url'] ?? '')),
+                'qr_code_url' => trim((string) ($item['qr_code_url'] ?? '')),
+                'qr_code_label' => trim((string) ($item['qr_code_label'] ?? '')),
                 'enabled' => ! empty($item['enabled']),
             ];
         }

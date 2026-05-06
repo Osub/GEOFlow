@@ -3,6 +3,8 @@ const username = process.env.GEO_ADMIN_USERNAME;
 const password = process.env.GEO_ADMIN_PASSWORD;
 const disableAds = process.argv.includes('--disable-ads');
 const enableFallbackScript = process.argv.includes('--fallback-script');
+const ctaQrCodeUrl = process.env.GPT88_CTA_QR_CODE_URL || '';
+const ctaQrCodeLabel = process.env.GPT88_CTA_QR_CODE_LABEL || '扫码了解 gpt88.cc';
 
 if (!username || !password) {
   throw new Error('Set GEO_ADMIN_USERNAME and GEO_ADMIN_PASSWORD.');
@@ -85,12 +87,28 @@ function checkboxChecked(html, name) {
   return Boolean(match && /\bchecked\b/i.test(match[0]));
 }
 
+function escapeInlineHtml(value) {
+  return value.replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+  }[char]));
+}
+
 function withArticleCtaFallback(analyticsCode) {
   const start = '<!-- GPT88 GEO article CTA fallback start -->';
   const end = '<!-- GPT88 GEO article CTA fallback end -->';
   const withoutOldFallback = analyticsCode
     .replace(new RegExp(`${start}[\\s\\S]*?${end}`, 'g'), '')
     .trim();
+  const qrMarkup = ctaQrCodeUrl ? [
+    '<div class="article-sticky-ad__qr">',
+    `<img src="${escapeInlineHtml(ctaQrCodeUrl)}" alt="${escapeInlineHtml(ctaQrCodeLabel)}" loading="lazy">`,
+    `<span>${escapeInlineHtml(ctaQrCodeLabel)}</span>`,
+    '</div>',
+  ].join('') : '';
 
   const fallback = `${start}
 <script>
@@ -115,6 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
       '<h3 class="article-sticky-ad__title">把 Claude Code、Cursor、Codex 接到 gpt88.cc</h3>' +
       '<p class="article-sticky-ad__copy">使用 gpt88.cc 的 OpenAI 兼容接口，创建 API Key 后复制 Base URL，即可把常用 AI 编程工具跑起来。</p>' +
     '</div>' +
+    ${JSON.stringify(qrMarkup)} +
     '<a href="https://gpt88.cc/" class="article-sticky-ad__button">立即接入</a>' +
   '</div>';
 
@@ -238,6 +257,8 @@ async function updateArticleDetailAds() {
       copy: '使用 gpt88.cc 的 OpenAI 兼容接口，创建 API Key 后复制 Base URL，即可把常用 AI 编程工具跑起来。',
       button_text: '立即接入',
       button_url: 'https://gpt88.cc/',
+      qr_code_url: ctaQrCodeUrl,
+      qr_code_label: ctaQrCodeLabel,
       enabled: !disableAds,
     },
     {
@@ -248,6 +269,8 @@ async function updateArticleDetailAds() {
       copy: '按开发、运营、自动化拆分 API Key，结合调用日志和套餐管理，降低 Token 成本失控风险。',
       button_text: '查看方案',
       button_url: 'https://gpt88.cc/',
+      qr_code_url: '',
+      qr_code_label: '扫码查看团队方案',
       enabled: false,
     },
     {
@@ -258,6 +281,8 @@ async function updateArticleDetailAds() {
       copy: '邀请好友注册和充值可获得持续奖励，KOL 与社群主可申请更高合作比例。',
       button_text: '了解合作',
       button_url: 'https://gpt88.cc/',
+      qr_code_url: '',
+      qr_code_label: '扫码了解合作',
       enabled: false,
     },
   ];

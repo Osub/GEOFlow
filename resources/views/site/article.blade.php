@@ -114,6 +114,14 @@
                         @endif
                         <p class="article-sticky-ad__copy">{{ $stickyAd['copy'] }}</p>
                     </div>
+                    @if(($stickyAd['qr_code_url'] ?? '') !== '')
+                        <div class="article-sticky-ad__qr">
+                            <img src="{{ $stickyAd['qr_code_url'] }}" alt="{{ ($stickyAd['qr_code_label'] ?? '') !== '' ? $stickyAd['qr_code_label'] : $stickyAd['button_text'] }}" loading="lazy">
+                            @if(($stickyAd['qr_code_label'] ?? '') !== '')
+                                <span>{{ $stickyAd['qr_code_label'] }}</span>
+                            @endif
+                        </div>
+                    @endif
                     <a href="{{ $stickyAd['button_url'] }}" class="article-sticky-ad__button">
                         {{ $stickyAd['button_text'] }}
                         <i data-lucide="arrow-up-right" class="w-4 h-4 ml-2"></i>

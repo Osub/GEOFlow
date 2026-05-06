@@ -1117,6 +1117,31 @@ blockquote {
     color: #1d4ed8;
 }
 
+.article-sticky-ad__qr {
+    display: flex;
+    flex-shrink: 0;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    width: 4.75rem;
+    color: #6b7280;
+    font-size: 0.72rem;
+    line-height: 1.25;
+    text-align: center;
+}
+
+.article-sticky-ad__qr img {
+    display: block;
+    width: 4.75rem;
+    height: 4.75rem;
+    border: 1px solid rgba(221, 224, 230, 0.95);
+    border-radius: 0.9rem;
+    background: #fff;
+    object-fit: cover;
+    padding: 0.25rem;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+}
+
 .article-sticky-ad__close {
     position: absolute;
     top: 0.95rem;
@@ -1157,6 +1182,15 @@ blockquote {
 
     .article-sticky-ad__copy {
         max-width: none;
+    }
+
+    .article-sticky-ad__qr {
+        width: 100%;
+    }
+
+    .article-sticky-ad__qr img {
+        width: 5.5rem;
+        height: 5.5rem;
     }
 
     .article-sticky-ad__button {

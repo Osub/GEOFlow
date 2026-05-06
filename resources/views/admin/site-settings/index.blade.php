@@ -375,6 +375,18 @@
                                     </div>
                                 </div>
 
+                                <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('admin.site_settings.ads.field_qr_code_url') }}</label>
+                                        <input type="text" name="ads[{{ $index }}][qr_code_url]" value="{{ $ad['qr_code_url'] ?? '' }}" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="{{ __('admin.site_settings.ads.placeholder_qr_code_url') }}">
+                                        <p class="mt-1 text-xs text-gray-500">{{ __('admin.site_settings.ads.qr_code_help') }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('admin.site_settings.ads.field_qr_code_label') }}</label>
+                                        <input type="text" name="ads[{{ $index }}][qr_code_label]" value="{{ $ad['qr_code_label'] ?? '' }}" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="{{ __('admin.site_settings.ads.placeholder_qr_code_label') }}">
+                                    </div>
+                                </div>
+
                                 <div class="mt-5 flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3">
                                     <div>
                                         <div class="text-sm font-medium text-gray-900">{{ __('admin.site_settings.ads.field_enabled') }}</div>
@@ -450,6 +462,18 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('admin.site_settings.ads.field_button_url') }}</label>
                     <input type="text" name="ads[__INDEX__][button_url]" value="" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="{{ __('admin.site_settings.ads.placeholder_button_url') }}">
+                </div>
+            </div>
+
+            <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('admin.site_settings.ads.field_qr_code_url') }}</label>
+                    <input type="text" name="ads[__INDEX__][qr_code_url]" value="" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="{{ __('admin.site_settings.ads.placeholder_qr_code_url') }}">
+                    <p class="mt-1 text-xs text-gray-500">{{ __('admin.site_settings.ads.qr_code_help') }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">{{ __('admin.site_settings.ads.field_qr_code_label') }}</label>
+                    <input type="text" name="ads[__INDEX__][qr_code_label]" value="" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="{{ __('admin.site_settings.ads.placeholder_qr_code_label') }}">
                 </div>
             </div>
 

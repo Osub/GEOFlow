@@ -8,7 +8,7 @@ namespace App\Support\Site;
 final class ArticleStickyAdPicker
 {
     /**
-     * @return array{id:string,badge:string,title:string,copy:string,button_text:string,button_url:string}|null
+     * @return array{id:string,badge:string,title:string,copy:string,button_text:string,button_url:string,qr_code_url:string,qr_code_label:string}|null
      */
     public static function firstEnabled(): ?array
     {
@@ -37,10 +37,30 @@ final class ArticleStickyAdPicker
                 'copy' => $copy,
                 'button_text' => $buttonText,
                 'button_url' => self::normalizeCtaTargetUrl($buttonUrl),
+                'qr_code_url' => self::normalizePublicImageUrl((string) ($item['qr_code_url'] ?? '')),
+                'qr_code_label' => trim((string) ($item['qr_code_label'] ?? '')),
             ];
         }
 
         return null;
+    }
+
+    private static function normalizePublicImageUrl(string $url): string
+    {
+        $normalized = trim($url);
+        if ($normalized === '') {
+            return '';
+        }
+
+        if (str_starts_with($normalized, '/') && ! str_starts_with($normalized, '//')) {
+            return $normalized;
+        }
+
+        if (preg_match('#^https?://#i', $normalized) === 1) {
+            return $normalized;
+        }
+
+        return '';
     }
 
     private static function normalizeCtaTargetUrl(string $url): string
