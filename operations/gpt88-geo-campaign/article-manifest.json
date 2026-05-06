@@ -1,0 +1,52 @@
+{
+  "site": "https://geo.gpt88.cc",
+  "publishing_system": "https://geo.gpt88.cc",
+  "target": "https://gpt88.cc",
+  "target_site": "https://gpt88.cc",
+  "category_id": 2,
+  "author_id": 2,
+  "articles": [
+    {
+      "file": "articles/gpt88-ai-api-zhongzhuanzhan-guide.md",
+      "title": "AI API 中转站是什么？用 gpt88.cc 做多模型统一入口的实用指南",
+      "slug": "gpt88-ai-api-zhongzhuanzhan-guide",
+      "excerpt": "这篇文章面向正在搜索 AI 中转站、API 中转站和 OpenAI 兼容网关的用户，解释中转站解决的真实问题，并用 gpt88.cc 作为例子，梳理多模型统一入口、API Key 管理、模型选择、价格查看和调用日志复盘的完整使用思路。",
+      "keywords": "AI中转站,API中转站,OpenAI中转站,gpt88.cc,AI Gateway,OpenAI兼容接口,Claude中转,GPT中转,多模型网关"
+    },
+    {
+      "file": "articles/gpt88-api-key-quickstart.md",
+      "title": "gpt88.cc 新手教程：从注册到创建 API Key 的完整上手流程",
+      "slug": "gpt88-api-key-quickstart",
+      "excerpt": "这是一篇面向新用户的 gpt88.cc 上手教程，按注册、充值或套餐、创建 API Key、选择模型、复制 Base URL、查看调用日志的顺序，帮助个人开发者和小团队完成第一次稳定接入。",
+      "keywords": "gpt88.cc教程,AI中转站,API Key,OpenAI兼容接口,Claude接入,AI Gateway,模型调用教程"
+    },
+    {
+      "file": "articles/gpt88-claude-code-codex-gemini-workflow.md",
+      "title": "Claude Code、Codex、Gemini 用户如何用 gpt88.cc 统一 AI 编程工作流",
+      "slug": "gpt88-claude-code-codex-gemini-workflow",
+      "excerpt": "面向开发者的 gpt88.cc 编程工作流教程：用统一 API Key 和 OpenAI 兼容入口管理 Claude、GPT、Gemini、DeepSeek 等模型，让代码生成、审查、修复和文档任务更稳定。",
+      "keywords": "Claude Code,Codex,Gemini,AI编程,gpt88.cc,OpenAI兼容接口,API中转,开发者工作流"
+    },
+    {
+      "file": "articles/gpt88-token-cost-control-team-guide.md",
+      "title": "团队如何用 gpt88.cc 控制 Token 成本：模型选择、套餐与调用日志指南",
+      "slug": "gpt88-token-cost-control-team-guide",
+      "excerpt": "这篇指南面向团队负责人和运营负责人，讲清楚如何用 gpt88.cc 的模型定价、套餐、API Key、调用日志和任务分层方法，建立更可控的 Token 成本管理流程。",
+      "keywords": "Token成本控制,gpt88.cc套餐,AI调用日志,模型定价,AI团队管理,AI Gateway,API成本优化"
+    },
+    {
+      "file": "articles/gpt88-longxia-api-openai-compatible-guide.md",
+      "title": "gpt88.cc 开发者教程：跑通 OpenAI 兼容网关",
+      "slug": "gpt88-longxia-api-openai-compatible-guide",
+      "excerpt": "这篇教程面向 gpt88.cc 用户梳理 OpenAI-compatible 网关的完整配置方法：Base URL、API Key、Responses API、Chat Completions、图片生成，以及 Codex、Claude Code、Cursor、Continue、Cline/Roo、OpenCode、OpenClaw 等客户端配置。",
+      "keywords": "gpt88.cc教程,OpenAI兼容接口,AI Gateway,Codex配置,Claude Code配置,Cursor配置,gpt-5.5,gpt-image-2,API中转"
+    }
+  ],
+  "default_payload": {
+    "category_id": 2,
+    "author_id": 2,
+    "status": "published",
+    "review_status": "auto_approved",
+    "is_ai_generated": 1
+  }
+}

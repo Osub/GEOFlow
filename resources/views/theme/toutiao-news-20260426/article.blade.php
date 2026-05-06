@@ -129,12 +129,50 @@
     </div>
 
     @if($stickyAd)
-        <div id="stickyAd" class="fixed bottom-4 right-4 z-50 max-w-xs rounded-2xl border border-gray-200 bg-white p-4 shadow-xl">
-            <button type="button" class="absolute right-2 top-2 text-gray-400 hover:text-gray-700" onclick="document.getElementById('stickyAd')?.remove()" aria-label="Close">×</button>
-            @if($stickyAd->title)
-                <div class="mb-2 pr-5 text-sm font-bold text-gray-900">{{ $stickyAd->title }}</div>
-            @endif
-            {!! $stickyAd->content_html !!}
-        </div>
+        <aside id="articleStickyAd" class="article-sticky-ad" data-ad-id="{{ $stickyAd['id'] }}">
+            <div class="article-sticky-ad__inner">
+                <button type="button" class="article-sticky-ad__close" id="articleStickyAdClose" aria-label="{{ __('site.article_ad_close') }}">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+                <div class="article-sticky-ad__content">
+                    @if($stickyAd['badge'] !== '')
+                        <div class="article-sticky-ad__badge">{{ $stickyAd['badge'] }}</div>
+                    @endif
+                    @if($stickyAd['title'] !== '')
+                        <h3 class="article-sticky-ad__title">{{ $stickyAd['title'] }}</h3>
+                    @endif
+                    <p class="article-sticky-ad__copy">{{ $stickyAd['copy'] }}</p>
+                </div>
+                <a href="{{ $stickyAd['button_url'] }}" class="article-sticky-ad__button">
+                    {{ $stickyAd['button_text'] }}
+                    <i data-lucide="arrow-up-right" class="w-4 h-4 ml-2"></i>
+                </a>
+            </div>
+        </aside>
     @endif
 @endsection
+
+@if($stickyAd)
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const stickyAd = document.getElementById('articleStickyAd');
+                const closeButton = document.getElementById('articleStickyAdClose');
+                if (!stickyAd || !closeButton) {
+                    return;
+                }
+                const storageKey = 'articleStickyAdDismissed:' + (stickyAd.dataset.adId || 'default');
+                if (window.localStorage && localStorage.getItem(storageKey) === '1') {
+                    stickyAd.remove();
+                    return;
+                }
+                closeButton.addEventListener('click', function () {
+                    if (window.localStorage) {
+                        localStorage.setItem(storageKey, '1');
+                    }
+                    stickyAd.remove();
+                });
+            });
+        </script>
+    @endpush
+@endif
